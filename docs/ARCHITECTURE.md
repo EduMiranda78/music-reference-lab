@@ -8,7 +8,8 @@ O Music Reference Lab separa a análise musical em camadas para permitir execuç
 
 ```mermaid
 flowchart TD
-    UI[Interface Flask] --> META[Reference Metadata]
+    WEB[Gunicorn WSGI] --> UI[Aplicação Flask]
+    UI --> META[Reference Metadata]
     UI --> AUDIO[Audio Analysis]
     META --> HEUR[Heuristic Engine]
     AUDIO --> HEUR
@@ -23,7 +24,29 @@ flowchart TD
     EXPORT --> HEART[HeartMuLa]
 ```
 
+## Camada web de produção
+
+A imagem Docker executa a aplicação com Gunicorn através de `wsgi:app`.
+
+Configuração atual:
+
+- 1 worker;
+- 2 threads;
+- timeout de 300 segundos;
+- graceful timeout de 30 segundos;
+- reciclagem do worker a cada até 200 requisições, com jitter;
+- logs de acesso e erro enviados para stdout/stderr;
+- healthcheck HTTP local em `127.0.0.1:8080`.
+
+A escolha de 1 worker reduz consumo de memória na VPS. As 2 threads permitem atender pequenas requisições concorrentes sem duplicar todo o processo Python. O timeout ampliado considera análises de áudio e chamadas de IA remota que podem levar mais tempo.
+
+O comando `python app.py` permanece apenas como opção de desenvolvimento local.
+
 ## Componentes
+
+### `wsgi.py`
+
+Entry point WSGI usado pelo Gunicorn.
 
 ### `app.py`
 
@@ -88,12 +111,11 @@ exports/
 
 Eles não devem ser versionados no Git.
 
-Em Docker, podem ser montados como volumes para persistência fora do container.
+Em Docker, são montados como volumes para persistência fora do container.
 
 ## Limites atuais
 
 - não existe banco de dados;
 - não existe autenticação;
 - os arquivos de upload ainda não possuem rotina automática de expurgo;
-- a aplicação Flask integrada ainda não é um servidor WSGI de produção;
 - gênero e arranjo ficam deliberadamente genéricos sem áudio ou IA complementar.
