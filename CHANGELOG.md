@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0, 2026-08-21
+
+- adiciona Suno como plataforma de destino;
+- adiciona link direto para `suno.com/create`;
+- gera formulário para Custom Mode com Title, Styles e Lyrics;
+- adiciona campo Exclude para Advanced Options;
+- adiciona sugestões iniciais de Weirdness, Style Influence e Audio Influence;
+- preserva a letra original em português na exportação Suno;
+- atualiza interface, documentação, arquitetura e smoke test para quatro plataformas.
+
 ## 0.3.0, 2026-08-21
 
 - adiciona IA complementar opcional por análise;
