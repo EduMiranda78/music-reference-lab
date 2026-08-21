@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Music Reference Lab</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="shell">
+  <header class="hero">
+    <div>
+      <span class="eyebrow">MUSIC REFERENCE LAB</span>
+      <h1>Transforme uma referência musical em parâmetros para IA</h1>
+      <p>Analise características gerais da faixa, mantenha sua letra em português e gere um formulário pronto para Stable Audio, SOUNDRAW ou HeartMuLa.</p>
+    </div>
+    <div class="status">
+      <span>IA complementar</span>
+      {% if ai_available %}
+        <strong>Disponível</strong>
+        <small>{{ provider_label }} configurado</small>
+      {% else %}
+        <strong>Não configurada</strong>
+        <small>A VPS funciona normalmente sem LLM</small>
+      {% endif %}
+    </div>
+  </header>
+
+  <section class="notice">
+    <strong>Regra do projeto:</strong>
+    a referência serve como mapa de gênero, andamento, instrumentação, estrutura, energia e produção. O app não orienta cópia de melodia, riff, hook, sample ou letra protegida.
+  </section>
+
+  <form class="card form-grid" method="post" action="/analyze" enctype="multipart/form-data">
+    <div class="field span-2">
+      <label for="reference">Música de referência</label>
+      <input id="reference" name="reference" required placeholder="Link do YouTube / YouTube Music ou Título - Artista">
+      <small>Links do YouTube são usados para identificar título e autor. O app não baixa automaticamente o áudio.</small>
+    </div>
+
+    <div class="field">
+      <label>Schema</label>
+      <div class="segmented">
+        <label><input type="radio" name="schema" value="A"><span>A · Compacto</span></label>
+        <label><input type="radio" name="schema" value="B" checked><span>B · Avançado</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="platform">Plataforma final</label>
+      <select id="platform" name="platform">
+        <option value="heartmula">HeartMuLa · letra + vocal</option>
+        <option value="stable_audio">Stable Audio · instrumental</option>
+        <option value="soundraw">SOUNDRAW · instrumental</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="target_title">Título da nova música</label>
+      <input id="target_title" name="target_title" placeholder="Opcional">
+    </div>
+
+    <div class="field">
+      <label for="duration">Duração desejada</label>
+      <select id="duration" name="duration">
+        <option value="30">30 segundos</option>
+        <option value="60">60 segundos</option>
+        <option value="120">120 segundos</option>
+        <option value="180" selected>180 segundos</option>
+        <option value="240">240 segundos</option>
+      </select>
+    </div>
+
+    <div class="field span-2 ai-option">
+      <div class="ai-option-head">
+        <div>
+          <label for="use_ai">IA complementar</label>
+          {% if ai_available %}
+            <small>{{ provider_label }} está configurado. Ative somente quando quiser usar IA nesta análise.</small>
+          {% else %}
+            <small>Nenhum LLM está configurado nesta instalação. A análise acústica e heurística continua disponível.</small>
+          {% endif %}
+        </div>
+        <label class="switch">
+          <input id="use_ai" name="use_ai" type="checkbox" value="1" {% if not ai_available %}disabled{% endif %}>
+          <span class="slider"></span>
+        </label>
+      </div>
+      {% if ai_available %}
+        <div class="ai-state available">Disponível, desligada por padrão</div>
+      {% else %}
+        <div class="ai-state unavailable">Indisponível nesta máquina</div>
+      {% endif %}
+    </div>
+
+    <div class="field span-2">
+      <label for="audio_file">Arquivo de áudio da referência, opcional</label>
+      <input id="audio_file" name="audio_file" type="file" accept=".mp3,.wav,.flac,.m4a,.ogg,.aac,audio/*">
+      <small>Recomendado para estimar BPM, tonalidade, dinâmica, brilho, densidade rítmica e largura estéreo. Use apenas áudio que você tenha direito de processar.</small>
+    </div>
+
+    <div class="field span-2">
+      <label for="lyrics">Sua letra ou tema</label>
+      <textarea id="lyrics" name="lyrics" rows="11" placeholder="Cole sua letra em português. Se ainda não houver letra, descreva o tema."></textarea>
+    </div>
+
+    <div class="span-2 actions">
+      <button type="submit">Analisar e preparar exportação</button>
+    </div>
+  </form>
+
+  <section class="platforms">
+    <article class="mini-card">
+      <h3>Stable Audio</h3>
+      <p>Prompt instrumental denso, BPM, gênero, instrumentos, atmosfera, qualidade e negative prompt.</p>
+    </article>
+    <article class="mini-card">
+      <h3>SOUNDRAW</h3>
+      <p>Mapeamento para Genre, Mood, Tempo, Instruments, Length e curva de energia.</p>
+    </article>
+    <article class="mini-card">
+      <h3>HeartMuLa</h3>
+      <p>Style tags, estrutura da música e sua letra em português para geração com vocal.</p>
+    </article>
+  </section>
+</main>
+</body>
+</html>
