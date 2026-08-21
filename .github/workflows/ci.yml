@@ -28,5 +28,8 @@ jobs:
       - name: Run smoke test
         run: python smoke_test.py
 
+      - name: Prepare environment file
+        run: cp .env.example .env
+
       - name: Validate Docker Compose
         run: docker compose config
