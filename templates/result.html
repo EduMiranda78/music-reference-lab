@@ -114,6 +114,7 @@
       <div class="kv"><span>Style Influence</span><strong>{{ export.creative_sliders.style_influence_percent }}%</strong></div>
       <div class="kv"><span>Audio Influence, se usar upload no Suno</span><strong>{{ export.creative_sliders.audio_influence_percent_if_uploading_audio }}%</strong></div>
       <div class="kv"><span>Duração de referência</span><strong>{{ export.recommended_duration_seconds }}s</strong></div>
+      <div class="kv"><span>JSON pronto para copiar</span><strong>{{ export_json_length }}/3000 caracteres</strong></div>
     {% else %}
       <div class="kv"><span>Style / Tags</span><strong>{{ export.style_tags }}</strong></div>
       <div class="kv"><span>Title</span><strong>{{ export.title }}</strong></div>
@@ -126,20 +127,58 @@
     <div class="platform-note">{{ export.platform_note }}</div>
 
     <details>
-      <summary>Ver JSON da exportação</summary>
+      <summary>
+        Ver JSON da exportação
+        {% if export.platform == "Suno" %} · {{ export_json_length }}/3000 caracteres{% endif %}
+      </summary>
       <pre id="export-json">{{ export_json }}</pre>
     </details>
   </section>
 </main>
 
 <script>
+function fallbackCopy(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  textarea.style.top = "0";
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
+  const copied = document.execCommand("copy");
+  document.body.removeChild(textarea);
+  if (!copied) throw new Error("Falha no método alternativo de cópia");
+}
+
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch (error) {
+      console.warn("Clipboard API indisponível, usando fallback.", error);
+    }
+  }
+  fallbackCopy(text);
+}
+
 document.querySelectorAll(".copy").forEach(btn => {
   btn.addEventListener("click", async () => {
     const el = document.getElementById(btn.dataset.target);
-    await navigator.clipboard.writeText(el.innerText);
+    if (!el) return;
+
     const old = btn.innerText;
-    btn.innerText = "Copiado";
-    setTimeout(() => btn.innerText = old, 1200);
+    try {
+      await copyText(el.innerText);
+      btn.innerText = "Copiado";
+    } catch (error) {
+      console.error(error);
+      btn.innerText = "Erro ao copiar";
+    }
+    setTimeout(() => btn.innerText = old, 1400);
   });
 });
 </script>
