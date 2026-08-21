@@ -12,7 +12,7 @@ from audio_analysis import analyze_audio
 from reference_metadata import youtube_metadata
 from heuristic_engine import build_analysis
 from ai_engine import enrich_with_ai
-from exporters import export_for_platform
+from exporters import export_for_platform, export_json_for_platform
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -107,6 +107,7 @@ def analyze():
         ai_warning = None
 
     export = export_for_platform(platform, analysis_data, target_title, duration)
+    export_json = export_json_for_platform(platform, export)
 
     result_id = uuid.uuid4().hex
     result_payload = {
@@ -131,7 +132,8 @@ def analyze():
         analysis=analysis_data,
         export=export,
         analysis_json=json.dumps(analysis_data, ensure_ascii=False, indent=2),
-        export_json=json.dumps(export, ensure_ascii=False, indent=2),
+        export_json=export_json,
+        export_json_length=len(export_json),
         result_id=result_id,
         warning=ai_warning or audio_warning,
         ai_requested=use_ai,
