@@ -35,8 +35,17 @@ assert analysis["scale"] == "minor"
 assert analysis["lyrics"] == "Minha letra de teste."
 assert analysis["genre"] == "Rock"
 
-for platform in ("stable_audio", "soundraw", "heartmula"):
+for platform in ("stable_audio", "soundraw", "heartmula", "suno"):
     exported = export_for_platform(platform, analysis, title="Faixa Teste", duration=180)
     assert exported["platform"]
+    assert exported["platform_url"]
+
+suno_export = export_for_platform("suno", analysis, title="Faixa Teste", duration=180)
+assert suno_export["platform"] == "Suno"
+assert suno_export["mode"] == "Custom"
+assert suno_export["lyrics"] == "Minha letra de teste."
+assert suno_export["title"] == "Faixa Teste"
+assert "styles" in suno_export
+assert "exclude" in suno_export
 
 print("SMOKE_TEST_OK")
