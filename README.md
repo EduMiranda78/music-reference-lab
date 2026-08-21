@@ -8,7 +8,7 @@
 ![Flask](https://img.shields.io/badge/Flask-3.1-000000?logo=flask&logoColor=white)
 ![Gunicorn](https://img.shields.io/badge/Gunicorn-WSGI-499848)
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
-![Version](https://img.shields.io/badge/version-0.4.1-6C63FF)
+![Version](https://img.shields.io/badge/version-0.4.2-6C63FF)
 ![Repository](https://img.shields.io/badge/repository-private-555555)
 
 </div>
@@ -41,6 +41,7 @@ O projeto usa a faixa de referência como um mapa de características gerais, co
 - exportação para HeartMuLa;
 - download do resultado completo em JSON;
 - interface responsiva para desktop e celular;
+- botão de cópia compatível também com acesso HTTP sem contexto seguro;
 - Gunicorn como servidor WSGI em produção;
 - execução com Docker Compose;
 - healthcheck HTTP do container.
@@ -152,7 +153,10 @@ O Lab prepara os campos mais úteis para o **Custom Mode** do Suno:
 - `Exclude` em Advanced Options;
 - recomendação inicial de `Weirdness`;
 - recomendação inicial de `Style Influence`;
-- referência de `Audio Influence` caso o usuário também envie áudio ao Suno.
+- referência de `Audio Influence` caso o usuário também envie áudio ao Suno;
+- JSON compacto pronto para copiar, limitado a **3000 caracteres**.
+
+Quando a letra é grande demais para caber no JSON compacto, somente a versão pronta para copiar é reduzida. A letra completa continua disponível no formulário de resultado e no JSON completo baixável.
 
 Os valores dos sliders são apenas pontos de partida. O objetivo é converter a análise técnica em um formulário fácil de copiar para o Suno sem inserir nomes de artistas ou tentar reproduzir elementos musicais protegidos.
 
