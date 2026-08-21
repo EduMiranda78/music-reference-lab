@@ -46,9 +46,8 @@ def stable_audio(data: dict, duration: int = 120) -> dict[str, Any]:
         "negative_prompt": negative,
         "recommended_duration_seconds": duration,
         "platform_note": (
-            "Stable Audio 3.0 is primarily aimed at instrumental generation. "
-            "Use this export for the instrumental, stems, or audio-to-audio work; "
-            "do not rely on it for intelligible sung lyrics."
+            "Stable Audio is best used here for instrumental generation, stems or audio-to-audio work. "
+            "Do not rely on it for intelligible sung lyrics."
         ),
     }
 
@@ -76,8 +75,55 @@ def soundraw(data: dict, duration: int = 180) -> dict[str, Any]:
         "length_seconds": duration,
         "energy_curve": " -> ".join(structure),
         "platform_note": (
-            "SOUNDRAW currently focuses on instrumental tracks and does not generate "
-            "integrated sung lyrics. Generate the instrumental there and add vocals separately."
+            "SOUNDRAW is aimed at instrumental creation. Generate the instrumental there and add vocals separately when needed."
+        ),
+    }
+
+
+def suno(data: dict, title: str = "", duration: int = 180) -> dict[str, Any]:
+    b = _base_fields(data)
+    vocal = data.get("vocal") or {}
+    mix = data.get("mix") or {}
+    master = data.get("master") or {}
+    lyrics = data.get("lyrics") or ""
+    structure = ((data.get("arrangement") or {}).get("structure") or
+                 ["Intro", "Verse", "Chorus", "Verse", "Chorus", "Bridge", "Final Chorus", "Outro"])
+
+    styles = (
+        f"{b['genre']}, {b['subgenre']}, around {b['bpm']} BPM, {b['key']} {b['scale']}, "
+        f"{b['mood']}, featuring {b['instruments']}. "
+        f"{vocal.get('style', 'clear expressive lead vocal')}. "
+        f"Use an original melody and original hooks, reference-informed energy and production, "
+        f"{mix.get('stereo_width', 'balanced stereo image')} stereo image, "
+        f"{mix.get('compression', 'controlled compression')}, "
+        f"{mix.get('reverb', 'controlled ambience')}, "
+        f"{master.get('character', 'polished modern master')}, high fidelity."
+    )
+
+    exclude = (
+        "copied melody, recognizable riff, signature hook imitation, copyrighted sample, "
+        "muddy mix, harsh highs, weak low end, unstable tempo, excessive reverb"
+    )
+
+    return {
+        "platform": "Suno",
+        "platform_url": "https://suno.com/create",
+        "mode": "Custom",
+        "title": title or "Nova composição",
+        "styles": styles,
+        "lyrics": lyrics,
+        "lyrics_structure": structure,
+        "instrumental": not bool(lyrics.strip()),
+        "exclude": exclude,
+        "recommended_duration_seconds": duration,
+        "creative_sliders": {
+            "weirdness_percent": 40,
+            "style_influence_percent": 75,
+            "audio_influence_percent_if_uploading_audio": 50,
+        },
+        "platform_note": (
+            "Use Suno in Custom mode. Paste the lyrics, Styles and Title fields, then use Advanced Options for Exclude. "
+            "The slider values are starting points, not fixed requirements."
         ),
     }
 
@@ -104,8 +150,7 @@ def heartmula(data: dict, title: str = "") -> dict[str, Any]:
         "lyrics_structure": structure,
         "lyrics": lyrics,
         "platform_note": (
-            "HeartMuLa supports lyrics, style tags and structured song sections, "
-            "making it the best fit among these three when the final output must include vocals."
+            "HeartMuLa supports lyrics, style tags and structured song sections, making it suitable when the final output must include vocals."
         ),
     }
 
@@ -115,4 +160,6 @@ def export_for_platform(platform: str, data: dict, title: str = "", duration: in
         return stable_audio(data, min(duration, 180))
     if platform == "soundraw":
         return soundraw(data, min(max(duration, 10), 300))
+    if platform == "suno":
+        return suno(data, title=title, duration=duration)
     return heartmula(data, title=title)
