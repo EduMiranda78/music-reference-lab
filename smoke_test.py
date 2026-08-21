@@ -1,5 +1,5 @@
 from heuristic_engine import build_analysis
-from exporters import export_for_platform
+from exporters import export_for_platform, export_json_for_platform, SUNO_JSON_MAX_CHARS
 
 reference = {
     "source_type": "title_or_artist",
@@ -47,5 +47,15 @@ assert suno_export["lyrics"] == "Minha letra de teste."
 assert suno_export["title"] == "Faixa Teste"
 assert "styles" in suno_export
 assert "exclude" in suno_export
+
+suno_json = export_json_for_platform("suno", suno_export)
+assert len(suno_json) <= SUNO_JSON_MAX_CHARS
+
+long_analysis = dict(analysis)
+long_analysis["lyrics"] = "Verso em português com acentuação. " * 300
+long_suno_export = export_for_platform("suno", long_analysis, title="Faixa Longa", duration=240)
+long_suno_json = export_json_for_platform("suno", long_suno_export)
+assert len(long_suno_json) <= SUNO_JSON_MAX_CHARS
+assert len(long_suno_export["lyrics"]) > SUNO_JSON_MAX_CHARS
 
 print("SMOKE_TEST_OK")
