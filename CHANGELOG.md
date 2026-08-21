@@ -1,0 +1,25 @@
+# Changelog
+
+## 0.3.0, 2026-08-21
+
+- adiciona IA complementar opcional por análise;
+- mantém IA desligada por padrão;
+- permite configuração de Ollama remoto;
+- permite configuração de LM Studio ou endpoint compatível;
+- adiciona links diretos para plataformas de destino;
+- melhora a interface de status da IA;
+- documenta arquitetura VPS + desktop Ubuntu via Tailscale;
+- adiciona estrutura de projeto para GitHub privado.
+
+## 0.2.0, 2026-08-21
+
+- adiciona links de destino para Stable Audio, SOUNDRAW e HeartMuLa;
+- melhora indicação do estado da IA complementar.
+
+## 0.1.0, 2026-08-21
+
+- primeira versão funcional;
+- análise acústica local;
+- Schemas A e B;
+- exportação para três plataformas;
+- execução com Docker Compose.
