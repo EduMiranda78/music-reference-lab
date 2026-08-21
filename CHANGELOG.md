@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0, 2026-08-21
+
+- adiciona `presets_exporter.py` ao repositório oficial;
+- integra quatro presets de alta intensidade para Suno e HeartMuLa;
+- adiciona perfis vocais masculino rouco / marra RJ e feminino suave / imponente RJ;
+- adapta as métricas reais de `audio_analysis.py` para o `ActionHeuristicMapper`;
+- mantém a exportação normal quando o usuário escolhe `Sem preset temático`;
+- preserva o limite de 3000 caracteres no JSON copiável do Suno;
+- adiciona `Exclude` de calmaria aos presets de guerra do Suno;
+- adiciona negative prompts na exportação temática do HeartMuLa;
+- remove o arquivo de áudio temporário após a análise para evitar acúmulo no disco da VPS;
+- amplia o smoke test para validar presets, heurísticas e limite do JSON Suno.
+
 ## 0.4.2, 2026-08-21
 
 - corrige o botão `Copiar` em acessos HTTP sem contexto seguro;
