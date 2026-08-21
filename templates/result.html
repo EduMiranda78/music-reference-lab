@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Resultado · Music Reference Lab</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="shell">
+  <header class="result-head">
+    <div>
+      <a class="back" href="/">← Nova análise</a>
+      <h1>{{ reference.title or reference.reference }}</h1>
+      {% if reference.author_name %}<p>{{ reference.author_name }}</p>{% endif %}
+    </div>
+    <a class="download" href="/download/{{ result_id }}">Baixar JSON completo</a>
+  </header>
+
+  {% if warning %}
+  <section class="warning">{{ warning }}</section>
+  {% endif %}
+
+  <section class="summary-grid">
+    <article class="metric">
+      <span>Gênero</span>
+      <strong>{{ analysis.genre }}</strong>
+      <small>{{ analysis.subgenre }}</small>
+    </article>
+    <article class="metric">
+      <span>BPM</span>
+      <strong>{{ analysis.bpm or "não medido" }}</strong>
+      <small>{{ analysis.key or "tom não medido" }} {{ analysis.scale or "" }}</small>
+    </article>
+    <article class="metric">
+      <span>Atmosfera</span>
+      <strong>{{ (analysis.mood or []) | join(", ") }}</strong>
+    </article>
+    <a class="metric metric-link" href="{{ export.platform_url }}" target="_blank" rel="noopener noreferrer" title="Abrir {{ export.platform }}">
+      <span>Destino</span>
+      <strong>{{ export.platform }}</strong>
+      <small>Abrir plataforma ↗</small>
+    </a>
+  </section>
+
+  {% if audio %}
+  <section class="card">
+    <div class="section-title">
+      <div><span class="eyebrow">MEDIÇÃO LOCAL</span><h2>Características acústicas</h2></div>
+    </div>
+    <div class="audio-grid">
+      <div><span>BPM estimado</span><strong>{{ audio.bpm_estimated }}</strong></div>
+      <div><span>Tom</span><strong>{{ audio.key_estimated }} {{ audio.scale_estimated }}</strong></div>
+      <div><span>Dinâmica</span><strong>{{ audio.dynamic_range_db }} dB</strong></div>
+      <div><span>Brilho</span><strong>{{ audio.brightness }}</strong></div>
+      <div><span>Densidade rítmica</span><strong>{{ audio.rhythmic_density }}</strong></div>
+      <div><span>Percussividade</span><strong>{{ audio.percussion_ratio }}</strong></div>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="card">
+    <div class="section-title">
+      <div><span class="eyebrow">ETAPAS 2 E 3</span><h2>JSON da análise</h2></div>
+      <button class="copy" data-target="analysis-json">Copiar</button>
+    </div>
+    <pre id="analysis-json">{{ analysis_json }}</pre>
+  </section>
+
+  <section class="card accent-card">
+    <div class="section-title">
+      <div><span class="eyebrow">ETAPA 5</span><h2>Formulário final · {{ export.platform }}</h2></div>
+      <div class="section-actions">
+        <a class="open-platform" href="{{ export.platform_url }}" target="_blank" rel="noopener noreferrer">Abrir {{ export.platform }} ↗</a>
+        <button class="copy" data-target="export-json">Copiar</button>
+      </div>
+    </div>
+
+    {% if export.platform == "Stable Audio" %}
+      <div class="export-block">
+        <label>Prompt Principal</label>
+        <div class="copy-field">{{ export.main_prompt }}</div>
+      </div>
+      <div class="export-block">
+        <label>Negative Prompt</label>
+        <div class="copy-field">{{ export.negative_prompt }}</div>
+      </div>
+      <div class="export-block">
+        <label>Duração recomendada</label>
+        <div class="copy-field">{{ export.recommended_duration_seconds }}s</div>
+      </div>
+    {% elif export.platform == "SOUNDRAW" %}
+      <div class="kv"><span>Genre</span><strong>{{ export.genre }}</strong></div>
+      <div class="kv"><span>Mood / Theme</span><strong>{{ export.mood_theme | join(", ") }}</strong></div>
+      <div class="kv"><span>Tempo</span><strong>{{ export.tempo_label }} · {{ export.bpm_reference or "BPM por referência" }}</strong></div>
+      <div class="kv"><span>Instruments to Keep</span><strong>{{ export.instruments_to_keep | join(", ") }}</strong></div>
+      <div class="kv"><span>Length / Energy Curve</span><strong>{{ export.length_seconds }}s · {{ export.energy_curve }}</strong></div>
+    {% else %}
+      <div class="kv"><span>Style / Tags</span><strong>{{ export.style_tags }}</strong></div>
+      <div class="kv"><span>Title</span><strong>{{ export.title }}</strong></div>
+      <div class="export-block">
+        <label>Lyrics Structure / Letra</label>
+        <div class="lyrics">{{ export.lyrics }}</div>
+      </div>
+    {% endif %}
+
+    <div class="platform-note">{{ export.platform_note }}</div>
+
+    <details>
+      <summary>Ver JSON da exportação</summary>
+      <pre id="export-json">{{ export_json }}</pre>
+    </details>
+  </section>
+</main>
+
+<script>
+document.querySelectorAll(".copy").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const el = document.getElementById(btn.dataset.target);
+    await navigator.clipboard.writeText(el.innerText);
+    const old = btn.innerText;
+    btn.innerText = "Copiado";
+    setTimeout(() => btn.innerText = old, 1200);
+  });
+});
+</script>
+</body>
+</html>
