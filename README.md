@@ -7,14 +7,14 @@
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-3.1-000000?logo=flask&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
-![Version](https://img.shields.io/badge/version-0.3.0-6C63FF)
+![Version](https://img.shields.io/badge/version-0.4.0-6C63FF)
 ![Repository](https://img.shields.io/badge/repository-private-555555)
 
 </div>
 
 ## Visão geral
 
-O **Music Reference Lab** recebe uma música de referência, uma letra ou tema e, opcionalmente, um arquivo de áudio. A aplicação mede características acústicas, organiza os resultados em JSON e prepara uma exportação específica para **Stable Audio**, **SOUNDRAW** ou **HeartMuLa**.
+O **Music Reference Lab** recebe uma música de referência, uma letra ou tema e, opcionalmente, um arquivo de áudio. A aplicação mede características acústicas, organiza os resultados em JSON e prepara uma exportação específica para **Suno**, **Stable Audio**, **SOUNDRAW** ou **HeartMuLa**.
 
 O projeto usa a faixa de referência como um mapa de características gerais, como andamento, tonalidade, atmosfera, instrumentação, densidade, dinâmica e estrutura. Ele não foi desenhado para reproduzir melodias, riffs, hooks, samples ou letras protegidas.
 
@@ -34,6 +34,7 @@ O projeto usa a faixa de referência como um mapa de características gerais, co
 - IA complementar opcional por análise;
 - suporte a Ollama;
 - suporte a LM Studio e endpoints compatíveis com OpenAI;
+- exportação para Suno;
 - exportação para Stable Audio;
 - exportação para SOUNDRAW;
 - exportação para HeartMuLa;
@@ -54,6 +55,7 @@ flowchart TD
     G -->|Não| H[JSON técnico]
     G -->|Sim| I[Ollama ou LM Studio]
     I --> H
+    H --> S[Suno]
     H --> J[Stable Audio]
     H --> K[SOUNDRAW]
     H --> L[HeartMuLa]
@@ -127,11 +129,26 @@ Mais detalhes em [`docs/REMOTE_AI.md`](docs/REMOTE_AI.md).
 
 | Destino | Exportação gerada | Uso principal no app |
 |---|---|---|
+| Suno | Custom Mode, Styles, Title, Lyrics, Exclude e sliders sugeridos | música completa com letra e vocal |
 | Stable Audio | prompt principal, negative prompt e duração | base e produção instrumental |
 | SOUNDRAW | genre, mood, tempo, instrumentos, duração e curva de energia | construção modular de instrumental |
 | HeartMuLa | style tags, título, estrutura e letra | composição orientada por letra e vocal |
 
 O resultado apresenta também um atalho direto para a plataforma escolhida.
+
+### Exportação para Suno
+
+O Lab prepara os campos mais úteis para o **Custom Mode** do Suno:
+
+- `Title`;
+- `Styles`;
+- `Lyrics`;
+- `Exclude` em Advanced Options;
+- recomendação inicial de `Weirdness`;
+- recomendação inicial de `Style Influence`;
+- referência de `Audio Influence` caso o usuário também envie áudio ao Suno.
+
+Os valores dos sliders são apenas pontos de partida. O objetivo é converter a análise técnica em um formulário fácil de copiar para o Suno sem inserir nomes de artistas ou tentar reproduzir elementos musicais protegidos.
 
 ## Instalação com Docker
 
