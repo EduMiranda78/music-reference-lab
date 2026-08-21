@@ -59,6 +59,18 @@
   </section>
   {% endif %}
 
+  {% if export.preset_name %}
+  <section class="card">
+    <div class="section-title">
+      <div><span class="eyebrow">PRESET TEMÁTICO</span><h2>{{ export.preset_name }}</h2></div>
+    </div>
+    <div class="audio-grid">
+      <div><span>Perfil vocal</span><strong>{{ "Masculino rouco / marra RJ" if export.vocal_gender == "male" else "Feminino suave / imponente RJ" }}</strong></div>
+      <div><span>Tags heurísticas</span><strong>{{ (export.action_tags or [])[:4] | join(", ") }}</strong></div>
+    </div>
+  </section>
+  {% endif %}
+
   <section class="card">
     <div class="section-title">
       <div><span class="eyebrow">ETAPAS 2 E 3</span><h2>JSON da análise</h2></div>
@@ -118,6 +130,12 @@
     {% else %}
       <div class="kv"><span>Style / Tags</span><strong>{{ export.style_tags }}</strong></div>
       <div class="kv"><span>Title</span><strong>{{ export.title }}</strong></div>
+      {% if export.negative_prompts %}
+      <div class="export-block">
+        <label>Negative Prompts</label>
+        <div class="copy-field">{{ export.negative_prompts }}</div>
+      </div>
+      {% endif %}
       <div class="export-block">
         <label>Lyrics Structure / Letra</label>
         <div class="lyrics">{{ export.lyrics }}</div>
