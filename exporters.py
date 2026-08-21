@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import json
 from typing import Any
+
+
+SUNO_JSON_MAX_CHARS = 3000
 
 
 def _join(items):
@@ -163,3 +167,70 @@ def export_for_platform(platform: str, data: dict, title: str = "", duration: in
     if platform == "suno":
         return suno(data, title=title, duration=duration)
     return heartmula(data, title=title)
+
+
+def _compact_json(payload: dict) -> str:
+    return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+
+
+def _truncate_text(value: str, max_chars: int) -> str:
+    if max_chars <= 0:
+        return ""
+    value = value or ""
+    if len(value) <= max_chars:
+        return value
+    if max_chars == 1:
+        return "…"
+    return value[: max_chars - 1].rstrip() + "…"
+
+
+def suno_export_json(export: dict, max_chars: int = SUNO_JSON_MAX_CHARS) -> str:
+    """Build a compact Suno payload that never exceeds max_chars.
+
+    The full lyrics remain available in the rendered form and downloaded result.
+    Only the copy-ready Suno JSON is shortened when necessary.
+    """
+    sliders = export.get("creative_sliders") or {}
+    payload = {
+        "mode": export.get("mode") or "Custom",
+        "title": export.get("title") or "Nova composição",
+        "styles": export.get("styles") or "",
+        "lyrics": export.get("lyrics") or "",
+        "exclude": export.get("exclude") or "",
+        "weirdness": sliders.get("weirdness_percent", 40),
+        "style_influence": sliders.get("style_influence_percent", 75),
+        "audio_influence": sliders.get("audio_influence_percent_if_uploading_audio", 50),
+    }
+
+    text = _compact_json(payload)
+    if len(text) <= max_chars:
+        return text
+
+    # Preserve the most useful production fields and spend the remaining budget on lyrics.
+    payload["styles"] = _truncate_text(payload["styles"], 700)
+    payload["exclude"] = _truncate_text(payload["exclude"], 260)
+    original_lyrics = payload["lyrics"]
+    payload["lyrics"] = ""
+
+    base_len = len(_compact_json(payload))
+    available_for_lyrics = max(0, max_chars - base_len)
+    payload["lyrics"] = _truncate_text(original_lyrics, available_for_lyrics)
+    text = _compact_json(payload)
+
+    # JSON escaping can add a few characters. Tighten until the hard limit is respected.
+    while len(text) > max_chars and payload["lyrics"]:
+        overflow = len(text) - max_chars
+        payload["lyrics"] = _truncate_text(payload["lyrics"], max(0, len(payload["lyrics"]) - overflow - 1))
+        text = _compact_json(payload)
+
+    if len(text) > max_chars:
+        payload["styles"] = _truncate_text(payload["styles"], 400)
+        text = _compact_json(payload)
+
+    return text[:max_chars]
+
+
+def export_json_for_platform(platform: str, export: dict) -> str:
+    if platform == "suno":
+        return suno_export_json(export)
+    return json.dumps(export, ensure_ascii=False, indent=2)
