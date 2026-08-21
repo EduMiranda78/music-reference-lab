@@ -6,8 +6,9 @@
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-3.1-000000?logo=flask&logoColor=white)
+![Gunicorn](https://img.shields.io/badge/Gunicorn-WSGI-499848)
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
-![Version](https://img.shields.io/badge/version-0.4.0-6C63FF)
+![Version](https://img.shields.io/badge/version-0.4.1-6C63FF)
 ![Repository](https://img.shields.io/badge/repository-private-555555)
 
 </div>
@@ -40,14 +41,19 @@ O projeto usa a faixa de referência como um mapa de características gerais, co
 - exportação para HeartMuLa;
 - download do resultado completo em JSON;
 - interface responsiva para desktop e celular;
-- execução com Docker Compose.
+- Gunicorn como servidor WSGI em produção;
+- execução com Docker Compose;
+- healthcheck HTTP do container.
 
 ## Como funciona
 
 ```mermaid
 flowchart TD
-    A[Música de referência] --> B[Identificação da referência]
+    W[Gunicorn WSGI] --> A[Aplicação Flask]
+    R[Música de referência] --> B[Identificação da referência]
     C[Arquivo de áudio opcional] --> D[Analisador acústico]
+    A --> B
+    A --> D
     B --> E[Motor heurístico]
     D --> E
     F[Letra ou tema em português] --> E
@@ -150,6 +156,27 @@ O Lab prepara os campos mais úteis para o **Custom Mode** do Suno:
 
 Os valores dos sliders são apenas pontos de partida. O objetivo é converter a análise técnica em um formulário fácil de copiar para o Suno sem inserir nomes de artistas ou tentar reproduzir elementos musicais protegidos.
 
+## Execução em produção
+
+A imagem Docker utiliza **Gunicorn** com `wsgi:app`.
+
+A configuração atual foi ajustada para uma VPS de baixo consumo:
+
+```text
+workers: 1
+threads: 2
+timeout: 300s
+graceful timeout: 30s
+keep-alive: 5s
+max requests: 200 + jitter de até 20
+```
+
+Essa configuração reduz duplicação de memória e mantém margem para análises de áudio ou chamadas remotas de IA que demorem mais que uma requisição web comum.
+
+A imagem também inclui healthcheck HTTP interno.
+
+Consulte [`docs/PRODUCTION.md`](docs/PRODUCTION.md) para detalhes de deploy e validação.
+
 ## Instalação com Docker
 
 ### Requisitos
@@ -215,7 +242,18 @@ source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 cp .env.example .env
+```
+
+Para desenvolvimento local:
+
+```bash
 python app.py
+```
+
+Para execução WSGI:
+
+```bash
+gunicorn --bind 0.0.0.0:8080 --workers 1 --threads 2 --timeout 300 wsgi:app
 ```
 
 A aplicação ficará disponível em:
@@ -257,6 +295,7 @@ Nunca envie o arquivo `.env`, tokens ou credenciais ao GitHub.
 ```text
 music-reference-lab/
 ├── app.py
+├── wsgi.py
 ├── audio_analysis.py
 ├── ai_engine.py
 ├── heuristic_engine.py
@@ -277,6 +316,7 @@ music-reference-lab/
 │   └── error.html
 ├── docs/
 │   ├── ARCHITECTURE.md
+│   ├── PRODUCTION.md
 │   └── REMOTE_AI.md
 └── .github/
     └── workflows/
@@ -337,7 +377,7 @@ O repositório também inclui validação automática em GitHub Actions.
 - [ ] comparação entre duas referências;
 - [ ] presets de produção reutilizáveis;
 - [ ] autenticação para exposição externa;
-- [ ] WSGI de produção e proxy reverso documentados;
+- [ ] proxy reverso e HTTPS documentados;
 - [ ] status remoto de Ollama ou LM Studio na interface;
 - [ ] exportação de presets por versão;
 - [ ] testes automatizados adicionais.
@@ -345,6 +385,7 @@ O repositório também inclui validação automática em GitHub Actions.
 ## Documentação
 
 - [Arquitetura](docs/ARCHITECTURE.md)
+- [Produção com Gunicorn](docs/PRODUCTION.md)
 - [IA remota no Ubuntu Desktop](docs/REMOTE_AI.md)
 - [Segurança](SECURITY.md)
 - [Contribuição e manutenção](CONTRIBUTING.md)
