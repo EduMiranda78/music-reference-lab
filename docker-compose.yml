@@ -2,6 +2,7 @@ services:
   music-reference-lab:
     build: .
     container_name: music-reference-lab
+    init: true
     ports:
       - "8080:8080"
     env_file:
@@ -12,3 +13,4 @@ services:
       - ./uploads:/app/uploads
       - ./exports:/app/exports
     restart: unless-stopped
+    stop_grace_period: 35s
