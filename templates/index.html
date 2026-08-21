@@ -72,6 +72,29 @@
       </select>
     </div>
 
+    <div id="high-energy-options" class="span-2 form-grid">
+      <div class="field">
+        <label for="vocal_gender">Perfil de voz e sotaque</label>
+        <select id="vocal_gender" name="vocal_gender">
+          <option value="male" selected>Voz de Cria · masculino rouco / marra RJ</option>
+          <option value="female">Voz Envolvente · feminino suave / imponente RJ</option>
+        </select>
+        <small>Aplicado aos presets temáticos do Suno e HeartMuLa.</small>
+      </div>
+
+      <div class="field">
+        <label for="preset">Preset temático de alta intensidade</label>
+        <select id="preset" name="preset">
+          <option value="guerra_de_cria" selected>Guerra de Cria · Funk RJ pesado + Phonk</option>
+          <option value="acao_epica">Ação Épica · cinematográfico + war drums</option>
+          <option value="cyberpunk_guerra">Guerra Cyberpunk · synths + industrial</option>
+          <option value="tensa_perseguicao">Tensa Perseguição · trap de combate</option>
+          <option value="none">Sem preset temático · usar análise normal</option>
+        </select>
+        <small>Os presets reforçam ação, tensão e movimento sem copiar elementos identificáveis da referência.</small>
+      </div>
+    </div>
+
     <div class="field span-2 ai-option">
       <div class="ai-option-head">
         <div>
@@ -113,7 +136,7 @@
   <section class="platforms">
     <article class="mini-card">
       <h3>Suno</h3>
-      <p>Custom Mode com Styles, Title, letra, Exclude e valores iniciais para os sliders criativos.</p>
+      <p>Custom Mode com Styles, Title, letra, Exclude, sliders e presets opcionais de alta intensidade.</p>
     </article>
     <article class="mini-card">
       <h3>Stable Audio</h3>
@@ -125,9 +148,25 @@
     </article>
     <article class="mini-card">
       <h3>HeartMuLa</h3>
-      <p>Style tags, estrutura da música e sua letra em português para geração com vocal.</p>
+      <p>Style tags, estrutura, letra e presets opcionais de voz e ação.</p>
     </article>
   </section>
 </main>
+
+<script>
+const platformSelect = document.getElementById("platform");
+const highEnergyOptions = document.getElementById("high-energy-options");
+
+function updatePresetVisibility() {
+  const enabled = ["suno", "heartmula"].includes(platformSelect.value);
+  highEnergyOptions.style.display = enabled ? "grid" : "none";
+  highEnergyOptions.querySelectorAll("select").forEach(el => {
+    el.disabled = !enabled;
+  });
+}
+
+platformSelect.addEventListener("change", updatePresetVisibility);
+updatePresetVisibility();
+</script>
 </body>
 </html>
