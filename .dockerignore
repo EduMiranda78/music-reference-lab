@@ -1,0 +1,13 @@
+.env
+.env.*
+uploads/
+exports/
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.gitignore
+*.zip
+*.tar
+*.tar.gz
+*.tgz
