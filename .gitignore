@@ -1,0 +1,37 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Runtime data
+uploads/*
+exports/*
+!uploads/.gitkeep
+!exports/.gitkeep
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Archives and backups
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.bak
+*.backup
+
+# Logs
+*.log
