@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.1, 2026-08-21
+
+- substitui o servidor de desenvolvimento do Flask por Gunicorn em produção;
+- adiciona `wsgi.py` como entrypoint WSGI;
+- configura 1 worker e 2 threads para reduzir consumo na VPS;
+- aumenta o timeout para análises de áudio e chamadas de IA mais demoradas;
+- adiciona reciclagem periódica do worker para limitar crescimento de memória;
+- envia logs de acesso e erro do Gunicorn para stdout/stderr do container;
+- adiciona healthcheck HTTP nativo à imagem Docker;
+- mantém `python app.py` disponível apenas para desenvolvimento local.
+
 ## 0.4.0, 2026-08-21
 
 - adiciona Suno como plataforma de destino;
