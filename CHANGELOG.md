@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.2, 2026-08-21
+
+- corrige o botão `Copiar` em acessos HTTP sem contexto seguro;
+- adiciona fallback de cópia para navegadores que bloqueiam `navigator.clipboard` fora de HTTPS;
+- limita o JSON pronto para copiar do Suno a no máximo 3000 caracteres;
+- mantém a letra completa disponível no formulário e no JSON completo baixável;
+- adiciona contador de caracteres do JSON Suno na tela de resultado;
+- adiciona teste automático para garantir o limite de 3000 caracteres.
+
 ## 0.4.1, 2026-08-21
 
 - substitui o servidor de desenvolvimento do Flask por Gunicorn em produção;
