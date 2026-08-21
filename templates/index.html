@@ -12,7 +12,7 @@
     <div>
       <span class="eyebrow">MUSIC REFERENCE LAB</span>
       <h1>Transforme uma referência musical em parâmetros para IA</h1>
-      <p>Analise características gerais da faixa, mantenha sua letra em português e gere um formulário pronto para Stable Audio, SOUNDRAW ou HeartMuLa.</p>
+      <p>Analise características gerais da faixa, mantenha sua letra em português e gere um formulário pronto para Suno, Stable Audio, SOUNDRAW ou HeartMuLa.</p>
     </div>
     <div class="status">
       <span>IA complementar</span>
@@ -49,6 +49,7 @@
     <div class="field">
       <label for="platform">Plataforma final</label>
       <select id="platform" name="platform">
+        <option value="suno">Suno · letra + vocal</option>
         <option value="heartmula">HeartMuLa · letra + vocal</option>
         <option value="stable_audio">Stable Audio · instrumental</option>
         <option value="soundraw">SOUNDRAW · instrumental</option>
@@ -110,6 +111,10 @@
   </form>
 
   <section class="platforms">
+    <article class="mini-card">
+      <h3>Suno</h3>
+      <p>Custom Mode com Styles, Title, letra, Exclude e valores iniciais para os sliders criativos.</p>
+    </article>
     <article class="mini-card">
       <h3>Stable Audio</h3>
       <p>Prompt instrumental denso, BPM, gênero, instrumentos, atmosfera, qualidade e negative prompt.</p>
