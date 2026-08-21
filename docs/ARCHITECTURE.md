@@ -17,6 +17,7 @@ flowchart TD
     DECISION -->|Sim| AI[AI Engine]
     AI --> RESULT
     RESULT --> EXPORT[Exporters]
+    EXPORT --> SUNO[Suno]
     EXPORT --> STABLE[Stable Audio]
     EXPORT --> SOUNDRAW[SOUNDRAW]
     EXPORT --> HEART[HeartMuLa]
@@ -33,6 +34,7 @@ Responsável por:
 - recebimento de áudio;
 - orquestração da análise;
 - seleção da IA complementar;
+- seleção da plataforma de destino;
 - geração e download do JSON final.
 
 ### `audio_analysis.py`
@@ -56,7 +58,14 @@ Camada opcional de enriquecimento. Atualmente suporta:
 
 ### `exporters.py`
 
-Converte o JSON de análise em formulários específicos para cada plataforma de destino.
+Converte o JSON de análise em formulários específicos para cada plataforma de destino:
+
+- Suno;
+- Stable Audio;
+- SOUNDRAW;
+- HeartMuLa.
+
+O exportador Suno prepara campos para o Custom Mode, incluindo Styles, Lyrics, Title, Exclude e sugestões iniciais para os sliders criativos.
 
 ### `schemas.py`
 
