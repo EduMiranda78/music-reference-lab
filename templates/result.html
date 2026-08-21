@@ -95,6 +95,25 @@
       <div class="kv"><span>Tempo</span><strong>{{ export.tempo_label }} · {{ export.bpm_reference or "BPM por referência" }}</strong></div>
       <div class="kv"><span>Instruments to Keep</span><strong>{{ export.instruments_to_keep | join(", ") }}</strong></div>
       <div class="kv"><span>Length / Energy Curve</span><strong>{{ export.length_seconds }}s · {{ export.energy_curve }}</strong></div>
+    {% elif export.platform == "Suno" %}
+      <div class="kv"><span>Mode</span><strong>{{ export.mode }}</strong></div>
+      <div class="kv"><span>Title</span><strong>{{ export.title }}</strong></div>
+      <div class="export-block">
+        <label>Styles</label>
+        <div class="copy-field">{{ export.styles }}</div>
+      </div>
+      <div class="export-block">
+        <label>Lyrics</label>
+        <div class="lyrics">{{ export.lyrics }}</div>
+      </div>
+      <div class="export-block">
+        <label>Exclude</label>
+        <div class="copy-field">{{ export.exclude }}</div>
+      </div>
+      <div class="kv"><span>Weirdness</span><strong>{{ export.creative_sliders.weirdness_percent }}%</strong></div>
+      <div class="kv"><span>Style Influence</span><strong>{{ export.creative_sliders.style_influence_percent }}%</strong></div>
+      <div class="kv"><span>Audio Influence, se usar upload no Suno</span><strong>{{ export.creative_sliders.audio_influence_percent_if_uploading_audio }}%</strong></div>
+      <div class="kv"><span>Duração de referência</span><strong>{{ export.recommended_duration_seconds }}s</strong></div>
     {% else %}
       <div class="kv"><span>Style / Tags</span><strong>{{ export.style_tags }}</strong></div>
       <div class="kv"><span>Title</span><strong>{{ export.title }}</strong></div>
