@@ -62,6 +62,20 @@ Return the complete JSON object.
 """
 
 
+def _merge_ai_result(base_analysis: dict, enriched: dict) -> dict:
+    """Mantém o schema-base e restaura campos que a IA não pode alterar."""
+    if not isinstance(enriched, dict):
+        raise RuntimeError("A IA não retornou um objeto JSON válido.")
+
+    result = dict(base_analysis)
+    result.update(enriched)
+
+    if "lyrics" in base_analysis:
+        result["lyrics"] = base_analysis["lyrics"]
+
+    return result
+
+
 def _ollama(base_analysis: dict, reference: dict, audio: dict | None, schema: str) -> dict:
     base_url = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434").rstrip("/")
     model = os.getenv("OLLAMA_MODEL", "").strip()
@@ -75,12 +89,13 @@ def _ollama(base_analysis: dict, reference: dict, audio: dict | None, schema: st
     payload = {
         "model": model,
         "stream": False,
+        "think": False,
         "format": "json",
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": _build_user_prompt(base_analysis, reference, audio, schema)},
         ],
-        "options": {"temperature": 0.25}
+        "options": {"temperature": 0.25},
     }
     r = requests.post(f"{base_url}/api/chat", json=payload, timeout=120)
     r.raise_for_status()
@@ -128,9 +143,11 @@ def enrich_with_ai(
 
     try:
         if provider == "ollama":
-            return _ollama(base_analysis, reference, audio, schema), None
+            enriched = _ollama(base_analysis, reference, audio, schema)
+            return _merge_ai_result(base_analysis, enriched), None
         if provider == "openai_compatible":
-            return _openai_compatible(base_analysis, reference, audio, schema), None
+            enriched = _openai_compatible(base_analysis, reference, audio, schema)
+            return _merge_ai_result(base_analysis, enriched), None
         return base_analysis, f"AI_PROVIDER desconhecido: {provider}"
     except Exception as exc:
         return base_analysis, f"A análise acústica foi concluída, mas a camada de IA falhou: {exc}"
