@@ -399,7 +399,8 @@ O repositório também inclui validação automática em GitHub Actions.
 
 Desenvolvido e mantido por **Eduardo Miranda**.
 
-GitHub: [`EduMiranda78`](https://github.com/EduMiranda78)
+GitHub: [`EduMiranda78`](https://github.com/EduMiranda78)  
+Site: [Miranda Stack](https://mirandastack.com/)
 
 ## Licenciamento
 
